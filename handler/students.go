@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"strconv"
 
 	"../db"
 	"../model"
@@ -33,29 +34,32 @@ func CreateStudent(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 
-	db.Save(student.ID, student)
+	_, ok := db.FindBy(strconv.Itoa(student.ID))
+	if ok {
+		http.Error(w, "Student already exists", http.StatusForbidden)
+	}
+
+	db.Save(strconv.Itoa(student.ID), student)
 	w.WriteHeader(http.StatusCreated)
 }
 
 func DeleteStudent(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	name := vars["id"]
-	db.Remove(name)
+	studentID := vars["id"]
+	db.Remove(studentID)
 	w.WriteHeader(http.StatusNoContent)
 }
 
 func GetStudent(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	name := vars["id"]
+	studentID := vars["id"]
 
-	student, ok := db.FindBy(name)
-
+	student, ok := db.FindBy(studentID)
 	if !ok {
 		http.Error(w, "Not found", http.StatusNotFound)
 	}
 
 	bytes, err := json.Marshal(student)
-
 	if err != nil {
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
 	}
