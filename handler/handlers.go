@@ -1,88 +1,59 @@
 package handler
 
-import (
-	"encoding/json"
-	"github.com/gorilla/mux"
-	"../db"
-	"../model"
-	"io/ioutil"
-	"net/http"
-)
+// import (
+// 	"encoding/json"
+// 	"github.com/gorilla/mux"
+// 	"../db"
+// 	"../model"
+// 	"io/ioutil"
+// 	"net/http"
+// )
 
-func GetCompanies(w http.ResponseWriter, _ *http.Request) {
-	companies := db.FindAll()
+// func GetCompany(w http.ResponseWriter, r *http.Request) {
+// 	vars := mux.Vars(r)
+// 	name := vars["subject"]
 
-	bytes, err := json.Marshal(companies)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
+// 	com, ok := db.FindBy(name)
+// 	if !ok {
+// 		http.NotFound(w, r)
+// 		return
+// 	}
 
-	writeJsonResponse(w, bytes)
-}
+// 	bytes, err := json.Marshal(com)
+// 	if err != nil {
+// 		http.Error(w, err.Error(), http.StatusInternalServerError)
+// 	}
 
-func GetCompany(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	name := vars["subject"]
+// 	writeJsonResponse(w, bytes)
+// }
 
-	com, ok := db.FindBy(name)
-	if !ok {
-		http.NotFound(w, r)
-		return
-	}
+// func UpdateCompany(w http.ResponseWriter, r *http.Request) {
+// 	vars := mux.Vars(r)
+// 	name := vars["subect"]
 
-	bytes, err := json.Marshal(com)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
+// 	body, err := ioutil.ReadAll(r.Body)
+// 	if err != nil {
+// 		http.Error(w, err.Error(), http.StatusInternalServerError)
+// 	}
 
-	writeJsonResponse(w, bytes)
-}
+// 	com := new(model.Company)
+// 	err = json.Unmarshal(body, com)
+// 	if err != nil {
+// 		http.Error(w, err.Error(), http.StatusInternalServerError)
+// 	}
 
-func SaveCompany(w http.ResponseWriter, r *http.Request) {
-	body, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
+// 	db.Save(name, com)
+// }
 
-	com := new(model.Company)
-	err = json.Unmarshal(body, com)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
+// func DeleteCompany(w http.ResponseWriter, r *http.Request) {
+// 	vars := mux.Vars(r)
+// 	name := vars["subject"]
 
-	db.Save(com.Subject, com)
+// 	db.Remove(name)
+// 	w.WriteHeader(http.StatusNoContent)
+// }
 
-	w.Header().Set("Location", r.URL.Path+"/"+com.Subject)
-	w.WriteHeader(http.StatusCreated)
-}
-
-func UpdateCompany(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	name := vars["subect"]
-
-	body, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
-
-	com := new(model.Company)
-	err = json.Unmarshal(body, com)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
-
-	db.Save(name, com)
-}
-
-func DeleteCompany(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	name := vars["subject"]
-
-	db.Remove(name)
-	w.WriteHeader(http.StatusNoContent)
-}
-
-func writeJsonResponse(w http.ResponseWriter, bytes []byte) {
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.Write(bytes)
-}
+// func writeJsonResponse(w http.ResponseWriter, bytes []byte) {
+// 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+// 	w.Write(bytes)
+// }

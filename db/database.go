@@ -12,9 +12,8 @@ func FindAll() []interface{} {
 }
 
 func FindBy(key string) (interface{}, bool) {
-	com, ok := database[key]
-
-	return com, ok
+	data, ok := database[key]
+	return data, ok
 }
 
 func Save(key string, item interface{}) {
