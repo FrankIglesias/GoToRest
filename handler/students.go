@@ -9,6 +9,7 @@ import (
 	"../db"
 	"../model"
 	"github.com/gorilla/mux"
+	"github.com/thoas/go-funk"
 )
 
 func GetStudents(w http.ResponseWriter, _ *http.Request) {
@@ -64,6 +65,23 @@ func GetStudent(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
 	}
 
+	writeJSONResponse(w, bytes)
+}
+
+func GetStudentAverage(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	studentID := vars["id"]
+
+	result, ok := db.FindBy(studentID)
+	if !ok {
+		http.Error(w, "Not found", http.StatusNotFound)
+	}
+
+	student := result.(*model.Student)
+	averageMark := funk.Sum(funk.Map(student.Subjects, func(subject model.Subject) int {
+		return subject.Mark
+	})) / float64(len(student.Subjects))
+	bytes, _ := json.Marshal(averageMark)
 	writeJSONResponse(w, bytes)
 }
 

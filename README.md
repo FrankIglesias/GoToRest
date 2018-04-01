@@ -12,6 +12,8 @@ $ ./GoToRest
 - http://localhost:3000/api/v1/students
     - `GET`: get list of students
     - `POST`: create a student
-- http://localhost:3000/api/v1/student/{name}
+- http://localhost:3000/api/v1/student/{id}
     - `GET`: gets a student
     - `DELETE`: remove a student
+- http://localhost:3000/api/v1/student/average/{id}
+    - `GET`: gets student marks average
