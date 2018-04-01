@@ -21,7 +21,7 @@ func GetStudents(w http.ResponseWriter, _ *http.Request) {
 	writeJSONResponse(w, bytes)
 }
 
-func SaveStudent(w http.ResponseWriter, r *http.Request) {
+func CreateStudent(w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -33,25 +33,25 @@ func SaveStudent(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 
-	db.Save(student.Name, student)
+	db.Save(student.ID, student)
 	w.WriteHeader(http.StatusCreated)
 }
 
 func DeleteStudent(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	name := vars["name"]
+	name := vars["id"]
 	db.Remove(name)
 	w.WriteHeader(http.StatusNoContent)
 }
 
 func GetStudent(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	name := vars["name"]
+	name := vars["id"]
 
 	student, ok := db.FindBy(name)
 
 	if !ok {
-		http.Error(w, "Not found", http.StatusInternalServerError)
+		http.Error(w, "Not found", http.StatusNotFound)
 	}
 
 	bytes, err := json.Marshal(student)
